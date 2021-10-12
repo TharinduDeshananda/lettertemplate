@@ -87,6 +87,7 @@ let editor = document.getElementById("contentBoxId");
 let btSup = document.getElementById("bt-sup");
 let btSub = document.getElementById("bt-sub");
 let fontSize = document.getElementById("font-size");
+let btFont = document.getElementById("fonts");
 let btBold = document.getElementById("bt-bold");
 let btItalic = document.getElementById("bt-italic");
 let btUnderline = document.getElementById("bt-underline");
@@ -103,14 +104,19 @@ let btUnorderedList = document.getElementById("bt-ul");
 editor.onselect = (event)=>{
   console.log(document.queryCommandState("fontSize"));
   fontSize.value = document.queryCommandState("fontSize");
+  btFont.value = document.queryCommandState("fontName");
+};
 
+btFont.onchange = (event)=>{
+    console.log("changing the font");
+    document.execCommand("fontName",false,event.target.value);
 };
 
 btSup.onclick=(event)=>{
   document.execCommand("superscript");
   console.log("changing sup....");
 };
-fontSize.onclick=(event)=>{
+btSub.onclick=(event)=>{
   document.execCommand("subscript");
   console.log("changing sub....");
 };
