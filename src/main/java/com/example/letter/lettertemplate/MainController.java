@@ -17,6 +17,7 @@ import org.docx4j.convert.out.html.SdtToListSdtTagHandler;
 import org.docx4j.convert.out.html.SdtWriter;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 
+import org.docx4j.openpackaging.parts.WordprocessingML.NumberingDefinitionsPart;
 import org.fit.pdfdom.PDFDomTree;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -90,22 +91,18 @@ public class MainController {
     public void handleChanges(@RequestParam("letterContent") String htmlLetterContent ,
                               @RequestParam("textContentBack")String textContentBack,
                               HttpServletResponse response){
-        //System.out.println(" *****"+htmlLetterContent+" *****");
+
         try{
-            String remove = "<!--?xml version=\"1.0\" encoding=\"utf-8\"?-->\n" +
-                    "<meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\">";
-            String xhtml=
-                    "<table border=\"1\" cellpadding=\"1\" cellspacing=\"1\" style=\"width:100%;\"><tbody><tr><td>test</td><td>test</td></tr><tr><td>test</td><td>test</td></tr><tr><td>test</td><td>test</td></tr></tbody></table>";
 
-//            xhtml = "<!DOCTYPE html [\n" +
-//                    "  <!ENTITY nbsp \"&#160;\">\n" +
-//                    "]>"+"<html>"+textContentBack+"<body>"+Jsoup.parse(htmlLetterContent.substring(remove.length()-1)).toString()+"</body>"+"</html>";
+            String xhtml= "";
 
-            htmlLetterContent = htmlLetterContent.replaceAll("&"+"nbsp;", " ");
-            htmlLetterContent = htmlLetterContent.replaceAll(String.valueOf((char) 160), " ");
 
-            textContentBack = textContentBack.replaceAll("&"+"nbsp;", " ");
-            textContentBack = textContentBack.replaceAll(String.valueOf((char) 160), " ");
+
+//            htmlLetterContent = htmlLetterContent.replaceAll("&"+"nbsp;", " ");
+//            htmlLetterContent = htmlLetterContent.replaceAll(String.valueOf((char) 160), " ");
+//
+//            textContentBack = textContentBack.replaceAll("&"+"nbsp;", " ");
+//            textContentBack = textContentBack.replaceAll(String.valueOf((char) 160), " ");
 
 
 
@@ -115,24 +112,42 @@ public class MainController {
             mainDoc.body().children().remove();
             mainDoc.body().appendChild(changedSmallDoc.getElementsByClass("document").first());
 
-            mainDoc.getElementsByTag("meta").remove();
+            //mainDoc.getElementsByTag("meta").remove();
 
             xhtml = mainDoc.toString();
+
             System.out.println("*******"+textContentBack+"*******");
             System.out.println(xhtml);
 
-            // To docx, with content controls
-            WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.createPackage();
+            //***********************************
+//            // To docx, with content controls
+//            WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.createPackage();
+//
+//            XHTMLImporterImpl XHTMLImporter = new XHTMLImporterImpl(wordMLPackage);
+//            //XHTMLImporter.setDivHandler(new DivToSdt());
+//
+//            wordMLPackage.getMainDocumentPart().getContent().addAll(
+//                    XHTMLImporter.convert( xhtml, "http://localhost:8080/") );
+//*****************************************
 
-            XHTMLImporterImpl XHTMLImporter = new XHTMLImporterImpl(wordMLPackage);
-            //XHTMLImporter.setDivHandler(new DivToSdt());
+            Document tempDoc = Jsoup.parse(xhtml);
+            tempDoc.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
+            xhtml = tempDoc.toString();
 
-            wordMLPackage.getMainDocumentPart().getContent().addAll(
-                    XHTMLImporter.convert( xhtml, "http://localhost:8080/") );
+            WordprocessingMLPackage docxOut = WordprocessingMLPackage.createPackage();
+            NumberingDefinitionsPart ndp = new NumberingDefinitionsPart();
+            docxOut.getMainDocumentPart().addTargetPart(ndp);
+            ndp.unmarshalDefaultNumbering();
 
-//            System.out.println(XmlUtils.marshaltoString(wordMLPackage
-//                    .getMainDocumentPart().getJaxbElement(), true, true));
+            XHTMLImporterImpl XHTMLImporter = new XHTMLImporterImpl(docxOut);
+            XHTMLImporter.setHyperlinkStyle("Hyperlink");
 
+
+
+            docxOut.getMainDocumentPart().getContent().addAll(
+                    XHTMLImporter.convert(xhtml, null) );
+
+            WordprocessingMLPackage wordMLPackage = docxOut;
 
             response.setHeader("Content-Type","application/vnd.openxmlformats-officedocument.wordprocessingml.document");
             response.setHeader("Content-Disposition","attachment; filename=mydoc.docx");
