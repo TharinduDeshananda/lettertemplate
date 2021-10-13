@@ -8,8 +8,13 @@ import org.docx4j.Docx4J;
 
 import org.docx4j.XmlUtils;
 import org.docx4j.convert.in.xhtml.XHTMLImporterImpl;
+import org.docx4j.convert.out.ConversionFeatures;
 import org.docx4j.convert.out.HTMLSettings;
 
+import org.docx4j.convert.out.html.AbstractHtmlExporter;
+import org.docx4j.convert.out.html.HtmlExporterNG2;
+import org.docx4j.convert.out.html.SdtToListSdtTagHandler;
+import org.docx4j.convert.out.html.SdtWriter;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 
 import org.fit.pdfdom.PDFDomTree;
@@ -50,13 +55,24 @@ public class MainController {
 
 
             InputStream is = new FileInputStream(doc);
-            WordprocessingMLPackage wordMLPackage = Docx4J.load(is);
+            WordprocessingMLPackage wordMLPackage = Docx4J.load(is);//************
+
+            AbstractHtmlExporter exporter = new HtmlExporterNG2();//***********
 
             HTMLSettings htmlSettings = Docx4J.createHTMLSettings();
             htmlSettings.setWmlPackage(wordMLPackage);
+            htmlSettings.setImageDirPath("/upload/images/");
+            htmlSettings.setImageTargetUri("/images/");
+
+            boolean nestLists = true;
+            if (nestLists) {
+                SdtWriter.registerTagHandler("HTML_ELEMENT", new SdtToListSdtTagHandler());
+            } else {
+                htmlSettings.getFeatures().remove(ConversionFeatures.PP_HTML_COLLECT_LISTS);
+            }
 
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            Docx4J.toHTML(htmlSettings, outStream, Docx4J.FLAG_EXPORT_PREFER_XSL);
+            Docx4J.toHTML(htmlSettings, outStream, Docx4J.FLAG_NONE);
             content = outStream.toString();
 
 
@@ -112,7 +128,7 @@ public class MainController {
             //XHTMLImporter.setDivHandler(new DivToSdt());
 
             wordMLPackage.getMainDocumentPart().getContent().addAll(
-                    XHTMLImporter.convert( xhtml, null) );
+                    XHTMLImporter.convert( xhtml, "http://localhost:8080/") );
 
 //            System.out.println(XmlUtils.marshaltoString(wordMLPackage
 //                    .getMainDocumentPart().getJaxbElement(), true, true));
