@@ -17,7 +17,7 @@
 </head>
 <body>
 
-<form action="handleEdit" method="POST" id="formId">
+<form action="handleEdit" method="POST" id="formId" >
     <input type="text" id="letterContentId" name="letterContent">
     <input type="text" name="textContentBack" th:value="${textContent}">
     <input type="submit" name="">
@@ -39,6 +39,16 @@
         <option value="5">5</option>
         <option value="6">6</option>
         <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+        <option value="16">16</option>
+
     </select>
     <select id="fonts" name="fonts">
         <option value="Arial">Arial</option>
@@ -69,7 +79,7 @@
 <script type="text/javascript">
 
     var letterField = document.getElementById("letterContentId");
-    var contentBox = document.getElementById("contentBoxId")
+    var contentBox = document.getElementById("contentBoxId");
     var letterForm = document.getElementById("formId");
 
 

@@ -1,6 +1,11 @@
 package com.example.letter.lettertemplate;
 
 
+import com.itextpdf.html2pdf.ConverterProperties;
+import com.itextpdf.html2pdf.HtmlConverter;
+import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import org.apache.commons.io.FileUtils;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -50,10 +55,20 @@ public class MainController {
 
         try{
             
-            File file1 = File.createTempFile("testFile","docx");
+            File file1 = File.createTempFile("testFile","pdf");
             FileUtils.writeByteArrayToFile(file1,file.getBytes());
             File doc = file1;
 
+            File logFile = new File("C:\\Users\\tdesh\\Desktop\\logFile.txt");
+            FileWriter writer = new FileWriter(logFile);
+
+
+//            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+//            PdfHandler.pdfToHtml(doc,outStream);
+//            writer.write(outStream.toString());
+//            writer.flush();
+//            writer.close();
+//            model.addAttribute("textContent",outStream.toString());
 
             InputStream is = new FileInputStream(doc);
             WordprocessingMLPackage wordMLPackage = Docx4J.load(is);//************
@@ -62,7 +77,7 @@ public class MainController {
 
             HTMLSettings htmlSettings = Docx4J.createHTMLSettings();
             htmlSettings.setWmlPackage(wordMLPackage);
-            htmlSettings.setImageDirPath("/upload/images/");
+            htmlSettings.setImageDirPath("/images/");
             htmlSettings.setImageTargetUri("/images/");
 
             boolean nestLists = true;
@@ -88,21 +103,30 @@ public class MainController {
     }
 
     @PostMapping("/handleEdit")
-    public void handleChanges(@RequestParam("letterContent") String htmlLetterContent ,
-                              @RequestParam("textContentBack")String textContentBack,
+    public void handleChanges(@RequestParam(value = "letterContent") String htmlLetterContent ,
+                              @RequestParam(value = "textContentBack")String textContentBack,
                               HttpServletResponse response){
 
         try{
 
+
+//            String xhtml= htmlLetterContent;
+//            response.setHeader("Content-Type","application/pdf");
+//            response.setHeader("Content-Disposition","attachment; filename=mydoc.pdf");
+//            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//            File logFile = new File("C:\\Users\\tdesh\\Desktop\\logFile.pdf");
+//
+//            PdfHandler.htmlToPdf(htmlLetterContent,outputStream);
+//            FileWriter writer = new FileWriter(logFile);
+//            writer.write(outputStream.toString(StandardCharsets.UTF_8));
+
             String xhtml= "";
 
+            htmlLetterContent = htmlLetterContent.replaceAll("&"+"nbsp;", " ");
+            htmlLetterContent = htmlLetterContent.replaceAll(String.valueOf((char) 160), " ");
 
-
-//            htmlLetterContent = htmlLetterContent.replaceAll("&"+"nbsp;", " ");
-//            htmlLetterContent = htmlLetterContent.replaceAll(String.valueOf((char) 160), " ");
-//
-//            textContentBack = textContentBack.replaceAll("&"+"nbsp;", " ");
-//            textContentBack = textContentBack.replaceAll(String.valueOf((char) 160), " ");
+            textContentBack = textContentBack.replaceAll("&"+"nbsp;", " ");
+            textContentBack = textContentBack.replaceAll(String.valueOf((char) 160), " ");
 
 
 
@@ -112,23 +136,14 @@ public class MainController {
             mainDoc.body().children().remove();
             mainDoc.body().appendChild(changedSmallDoc.getElementsByClass("document").first());
 
-            //mainDoc.getElementsByTag("meta").remove();
+
 
             xhtml = mainDoc.toString();
+//            xhtml = changedSmallDoc.toString();
+//            System.out.println(xhtml);
 
-            System.out.println("*******"+textContentBack+"*******");
-            System.out.println(xhtml);
 
-            //***********************************
-//            // To docx, with content controls
-//            WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.createPackage();
-//
-//            XHTMLImporterImpl XHTMLImporter = new XHTMLImporterImpl(wordMLPackage);
-//            //XHTMLImporter.setDivHandler(new DivToSdt());
-//
-//            wordMLPackage.getMainDocumentPart().getContent().addAll(
-//                    XHTMLImporter.convert( xhtml, "http://localhost:8080/") );
-//*****************************************
+
 
             Document tempDoc = Jsoup.parse(xhtml);
             tempDoc.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
@@ -154,23 +169,14 @@ public class MainController {
             wordMLPackage.save(response.getOutputStream());
 
 
-
         }catch(Exception e){
-            System.out.println("Failed to handle edit "+e);
+            System.out.println("Failed to handle edit "+e.toString());
         }
         finally {
 
         }
 
     }
-
-
-
-
-
-
-
-
 }
 
 

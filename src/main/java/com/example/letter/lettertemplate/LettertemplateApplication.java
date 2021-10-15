@@ -26,7 +26,7 @@ public class LettertemplateApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		File convFile = new File("/upload/images/");
+		File convFile = new File("/images/");
 		convFile.mkdirs();
 		System.out.println("directory created "+convFile.exists());
 	}

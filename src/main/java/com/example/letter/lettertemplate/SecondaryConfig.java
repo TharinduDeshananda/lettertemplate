@@ -14,6 +14,6 @@ public class SecondaryConfig extends WebMvcConfigurationSupport{
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry){
         registry.addResourceHandler("/images/**")
-                .addResourceLocations("file:/upload/images/");
+                .addResourceLocations("file:/images/");
     }
 }
