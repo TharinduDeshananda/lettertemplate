@@ -1,4 +1,4 @@
-package com.example.letter.lettertemplate;
+package com.example.letter.lettertemplate.pdfhandler;
 
 import com.spire.pdf.FileFormat;
 import com.spire.pdf.PdfDocument;
@@ -29,9 +29,6 @@ public class PdfHandler {
 
         HtmlConverter.setPluginPath("C:\\Users\\tdesh\\Desktop\\New folder\\plugins-windows-x64");
         HtmlConverter.convert(htmlContent, outputStream, true, 1000000, new Size(600f, 900f), new PdfMargins(0), LoadHtmlType.Source_Code);
-
-
-
 
     }
 

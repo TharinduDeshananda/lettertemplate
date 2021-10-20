@@ -1,55 +1,56 @@
 package com.example.letter.lettertemplate;
 
 
+import com.example.letter.lettertemplate.entities.LetterTemplate;
+import com.example.letter.lettertemplate.htmlhandler.HtmlHandler;
+import com.example.letter.lettertemplate.pdfhandler.PdfHandler;
+import com.example.letter.lettertemplate.services.LetterTemplateService;
 import com.itextpdf.html2pdf.ConverterProperties;
 import com.itextpdf.html2pdf.HtmlConverter;
+import com.itextpdf.html2pdf.resolver.font.DefaultFontProvider;
+import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.font.FontProvider;
 import org.apache.commons.io.FileUtils;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.docx4j.Docx4J;
-
-import org.docx4j.XmlUtils;
-import org.docx4j.convert.in.xhtml.XHTMLImporterImpl;
-import org.docx4j.convert.out.ConversionFeatures;
-import org.docx4j.convert.out.HTMLSettings;
-
-import org.docx4j.convert.out.html.AbstractHtmlExporter;
-import org.docx4j.convert.out.html.HtmlExporterNG2;
-import org.docx4j.convert.out.html.SdtToListSdtTagHandler;
-import org.docx4j.convert.out.html.SdtWriter;
-import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
-
-import org.docx4j.openpackaging.parts.WordprocessingML.NumberingDefinitionsPart;
-import org.fit.pdfdom.PDFDomTree;
+import org.dom4j.rule.Mode;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.PostMapping;
-
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 
 @Controller
 public class MainController {
 
+    @Autowired
+    LetterTemplateService letterTemplateService;
+
     @GetMapping("/")
-    public String homePage(){
+    public String homePage(Model model){
+        List<LetterTemplate> templateList = letterTemplateService.getAllTemplates();
+        model.addAttribute("templates",templateList);
         return "homePage";
     }
 
-    @PostMapping("/fileHandler")
+    @GetMapping("/templateUpload")
+    public String fileUploadPAge(){
+        return "fileUploadPage";
+    }
+
+    @PostMapping("/templateUploadHandle")
     public String handleFile(@RequestParam("ppfile") MultipartFile file, Model model){
         String content = "";
 
@@ -57,43 +58,8 @@ public class MainController {
             
             File file1 = File.createTempFile("testFile","pdf");
             FileUtils.writeByteArrayToFile(file1,file.getBytes());
-            File doc = file1;
-
-            File logFile = new File("C:\\Users\\tdesh\\Desktop\\logFile.txt");
-            FileWriter writer = new FileWriter(logFile);
-
-
-//            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-//            PdfHandler.pdfToHtml(doc,outStream);
-//            writer.write(outStream.toString());
-//            writer.flush();
-//            writer.close();
-//            model.addAttribute("textContent",outStream.toString());
-
-            InputStream is = new FileInputStream(doc);
-            WordprocessingMLPackage wordMLPackage = Docx4J.load(is);//************
-
-            AbstractHtmlExporter exporter = new HtmlExporterNG2();//***********
-
-            HTMLSettings htmlSettings = Docx4J.createHTMLSettings();
-            htmlSettings.setWmlPackage(wordMLPackage);
-            htmlSettings.setImageDirPath("/images/");
-            htmlSettings.setImageTargetUri("/images/");
-
-            boolean nestLists = true;
-            if (nestLists) {
-                SdtWriter.registerTagHandler("HTML_ELEMENT", new SdtToListSdtTagHandler());
-            } else {
-                htmlSettings.getFeatures().remove(ConversionFeatures.PP_HTML_COLLECT_LISTS);
-            }
-
-            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            Docx4J.toHTML(htmlSettings, outStream, Docx4J.FLAG_NONE);
-            content = outStream.toString();
-
-
+            content = FileUtils.readFileToString(file1);
             model.addAttribute("textContent",content);
-
         }catch(Exception e){
             System.out.println(e);
         }
@@ -102,80 +68,24 @@ public class MainController {
         return "fileView";
     }
 
-    @PostMapping("/handleEdit")
+    @PostMapping("/createTemplate")
     public void handleChanges(@RequestParam(value = "letterContent") String htmlLetterContent ,
                               @RequestParam(value = "textContentBack")String textContentBack,
-                              HttpServletResponse response){
+                              @RequestParam("templateName")String templateName,
+                              @RequestParam("templateDesc")String templateDesc,
+                              HttpServletResponse response, Model model){
+        LetterTemplate letterTemplate = letterTemplateService.saveTemplate(htmlLetterContent,templateName,templateDesc);
+        model.addAttribute("template",letterTemplate);
 
-        try{
+        //HtmlHandler.htmlToPdf(htmlLetterContent,textContentBack,response);
 
+    }
 
-//            String xhtml= htmlLetterContent;
-//            response.setHeader("Content-Type","application/pdf");
-//            response.setHeader("Content-Disposition","attachment; filename=mydoc.pdf");
-//            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-//            File logFile = new File("C:\\Users\\tdesh\\Desktop\\logFile.pdf");
-//
-//            PdfHandler.htmlToPdf(htmlLetterContent,outputStream);
-//            FileWriter writer = new FileWriter(logFile);
-//            writer.write(outputStream.toString(StandardCharsets.UTF_8));
-
-            String xhtml= "";
-
-            htmlLetterContent = htmlLetterContent.replaceAll("&"+"nbsp;", " ");
-            htmlLetterContent = htmlLetterContent.replaceAll(String.valueOf((char) 160), " ");
-
-            textContentBack = textContentBack.replaceAll("&"+"nbsp;", " ");
-            textContentBack = textContentBack.replaceAll(String.valueOf((char) 160), " ");
-
-
-
-            Document mainDoc = Jsoup.parse(textContentBack);
-            Document changedSmallDoc = Jsoup.parse(htmlLetterContent);
-
-            mainDoc.body().children().remove();
-            mainDoc.body().appendChild(changedSmallDoc.getElementsByClass("document").first());
-
-
-
-            xhtml = mainDoc.toString();
-//            xhtml = changedSmallDoc.toString();
-//            System.out.println(xhtml);
-
-
-
-
-            Document tempDoc = Jsoup.parse(xhtml);
-            tempDoc.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
-            xhtml = tempDoc.toString();
-
-            WordprocessingMLPackage docxOut = WordprocessingMLPackage.createPackage();
-            NumberingDefinitionsPart ndp = new NumberingDefinitionsPart();
-            docxOut.getMainDocumentPart().addTargetPart(ndp);
-            ndp.unmarshalDefaultNumbering();
-
-            XHTMLImporterImpl XHTMLImporter = new XHTMLImporterImpl(docxOut);
-            XHTMLImporter.setHyperlinkStyle("Hyperlink");
-
-
-
-            docxOut.getMainDocumentPart().getContent().addAll(
-                    XHTMLImporter.convert(xhtml, null) );
-
-            WordprocessingMLPackage wordMLPackage = docxOut;
-
-            response.setHeader("Content-Type","application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-            response.setHeader("Content-Disposition","attachment; filename=mydoc.docx");
-            wordMLPackage.save(response.getOutputStream());
-
-
-        }catch(Exception e){
-            System.out.println("Failed to handle edit "+e.toString());
-        }
-        finally {
-
-        }
-
+    @PostMapping("/deleteTemplate")
+    public String deleteTemplate(@RequestParam("templateId")String templateId,Model model){
+        boolean deleteStatus = letterTemplateService.deleteTemplate(templateId);
+        model.addAttribute("deleteStatus",deleteStatus);
+        return "/";
     }
 }
 
