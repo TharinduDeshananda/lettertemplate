@@ -1,6 +1,7 @@
 package com.example.letter.lettertemplate;
 
 import com.mongodb.client.MongoClient;
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.MongoClientFactoryBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
@@ -19,6 +21,12 @@ public class LettertemplateApplication implements CommandLineRunner {
 
 	public static void main(String[] args) {
 		SpringApplication.run(LettertemplateApplication.class, args);
+	}
+
+	@Bean
+	public ModelMapper modelMapper(){
+		ModelMapper mapper = new ModelMapper();
+		return mapper;
 	}
 
 	@Bean

@@ -15,17 +15,17 @@ import java.io.OutputStream;
 
 public class HtmlHandler {
 
-    public static void htmlToPdf(String htmlLetterContent,String textContentBack, HttpServletResponse response){
+    public static void htmlToPdf(String htmlLetterContent,String textContentBack, OutputStream outputStream){
         try{
 
-            response.setHeader("Content-Type","application/pdf");
-            response.setHeader("Content-Disposition","attachment; filename=mydoc.pdf");
+//            response.setHeader("Content-Type","application/pdf");
+//            response.setHeader("Content-Disposition","attachment; filename=mydoc.pdf");
 
             htmlLetterContent = htmlLetterContent.replaceAll("&"+"nbsp;", " ");
             htmlLetterContent = htmlLetterContent.replaceAll(String.valueOf((char) 160), " ");
 
-            textContentBack = textContentBack.replaceAll("&"+"nbsp;", " ");
-            textContentBack = textContentBack.replaceAll(String.valueOf((char) 160), " ");
+//            textContentBack = textContentBack.replaceAll("&"+"nbsp;", " ");
+//            textContentBack = textContentBack.replaceAll(String.valueOf((char) 160), " ");
 
             String xhtml= Jsoup.parse(htmlLetterContent).html();
 
@@ -33,7 +33,8 @@ public class HtmlHandler {
 
 
 
-            PdfWriter pdfWriter = new PdfWriter(response.getOutputStream());
+            //PdfWriter pdfWriter = new PdfWriter(response.getOutputStream());
+            PdfWriter pdfWriter = new PdfWriter(outputStream);
             ConverterProperties converterProperties = new ConverterProperties();
 
             FontProvider fontProvider = new DefaultFontProvider(true,true,true);
