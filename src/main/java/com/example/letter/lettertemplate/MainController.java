@@ -1,6 +1,7 @@
 package com.example.letter.lettertemplate;
 
 
+import com.example.letter.lettertemplate.contentHandlers.HtmlContentHandler;
 import com.example.letter.lettertemplate.entities.LetterTemplate;
 import com.example.letter.lettertemplate.htmlhandler.HtmlHandler;
 import com.example.letter.lettertemplate.models.EmailUser;
@@ -48,10 +49,19 @@ public class MainController {
     //get to the home page. displays existing letter templates to the user to choose.
     @GetMapping("/")
     public String homePage(Model model){
-        List<LetterTemplate> templateList = letterTemplateService.getAllTemplates();
+//        List<LetterTemplate> templateList = letterTemplateService.getAllTemplates();
+//
+//        model.addAttribute("templates",letterListToDtoList(templateList));//only name, date and decription sent not content
+        return "newHome";
+    }
 
-        model.addAttribute("templates",letterListToDtoList(templateList));//only name, date and decription sent not content
-        return "homePage";
+    @PostMapping("/handleNewContent")
+    public String handleNewContent(@RequestParam("htmlContent") String htmlContent,Model model){
+
+        htmlContent = HtmlContentHandler.insertTextAreaToString(htmlContent);
+
+        model.addAttribute("templateContent",htmlContent);
+        return "newTemplateView";
     }
 
     //to the file upload choose page
@@ -81,7 +91,7 @@ public class MainController {
 
     //save html content as htmltemplate objects in database. redirect to home page at end
     @PostMapping("/createTemplate")
-    public String handleChanges(@RequestParam(value = "letterContent") String htmlLetterContent ,
+    public void handleChanges(@RequestParam(value = "letterContent") String htmlLetterContent ,
                               @RequestParam(value = "textContentBack")String textContentBack,
                               @RequestParam(value = "templateName", required = false)String templateName,
                               @RequestParam(value = "templateDesc",required = false)String templateDesc,
@@ -90,8 +100,16 @@ public class MainController {
 
         model.addAttribute("template",letterTemplate);
 
-        return "redirect:/";
-        //HtmlHandler.htmlToPdf(htmlLetterContent,textContentBack,response);
+            response.setHeader("Content-Type","application/pdf");
+            response.setHeader("Content-Disposition","attachment; filename=mydoc.pdf");
+            try{
+                HtmlHandler.htmlToPdf(htmlLetterContent,textContentBack,response.getOutputStream());
+            }catch(Exception e){
+                System.out.println(e);
+            }
+
+        //return "redirect:/";
+
     }
 
     //************************** User parts *********************************
@@ -112,7 +130,7 @@ public class MainController {
                                        @ModelAttribute EmailUser emailUser){
         //send email from here
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        HtmlHandler.htmlToPdf(htmlLetterContent,textContentBack,outStream);
+        HtmlHandler.htmlToPdf(htmlLetterContent,null,outStream);
         try{
             File userSentFile = File.createTempFile("userFile","pdf");//file to send to the user
             FileUtils.writeByteArrayToFile(userSentFile,outStream.toByteArray());
@@ -130,6 +148,8 @@ public class MainController {
         model.addAttribute("deleteStatus",deleteStatus);
         return "/";
     }
+
+
 
 
     public List<LetterTemplateDto> letterListToDtoList(List<LetterTemplate> letters){

@@ -54,7 +54,7 @@ public class HtmlHandler {
             PdfDocument pdfDocument = new PdfDocument(pdfWriter);
 
             //For setting the PAGE SIZE
-            pdfDocument.setDefaultPageSize(new PageSize(PageSize.A3));
+            pdfDocument.setDefaultPageSize(new PageSize(PageSize.A4));
 
             Document document = HtmlConverter.convertToDocument(htmlString, pdfDocument, converterProperties);
             document.close();
