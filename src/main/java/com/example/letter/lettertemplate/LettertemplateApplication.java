@@ -23,11 +23,11 @@ public class LettertemplateApplication implements CommandLineRunner {
 		SpringApplication.run(LettertemplateApplication.class, args);
 	}
 
-	@Bean
-	public ModelMapper modelMapper(){
-		ModelMapper mapper = new ModelMapper();
-		return mapper;
-	}
+//	@Bean
+//	public ModelMapper modelMapper(){
+//		ModelMapper mapper = new ModelMapper();
+//		return mapper;
+//	}
 
 	@Bean
 	public MultipartResolver multipartResolver(){
@@ -36,25 +36,25 @@ public class LettertemplateApplication implements CommandLineRunner {
 		return resolver;
 	}
 
-	@Bean("cmongoTemplate")
-	public MongoTemplate getTemplate(){
-
-		try{
-			MongoClientFactoryBean factoryBean = new MongoClientFactoryBean();
-			factoryBean.setHost("localhost");
-			factoryBean.setPort(27017);
-			factoryBean.afterPropertiesSet();
-			MongoClient client = factoryBean.getObject();
-			SimpleMongoClientDatabaseFactory databaseFactory= new SimpleMongoClientDatabaseFactory(client,"letter_template_base");
-
-			MongoTemplate template = new MongoTemplate(databaseFactory);
-			return template;
-		}catch(Exception e) {
-			System.out.println(e);
-			System.exit(1);
-		}
-		return null;
-	}
+//	@Bean("cmongoTemplate")
+//	public MongoTemplate getTemplate(){
+//
+//		try{
+//			MongoClientFactoryBean factoryBean = new MongoClientFactoryBean();
+//			factoryBean.setHost("localhost");
+//			factoryBean.setPort(27017);
+//			factoryBean.afterPropertiesSet();
+//			MongoClient client = factoryBean.getObject();
+//			SimpleMongoClientDatabaseFactory databaseFactory= new SimpleMongoClientDatabaseFactory(client,"letter_template_base");
+//
+//			MongoTemplate template = new MongoTemplate(databaseFactory);
+//			return template;
+//		}catch(Exception e) {
+//			System.out.println(e);
+//			System.exit(1);
+//		}
+//		return null;
+//	}
 
 	@Override
 	public void run(String... args) throws Exception {
