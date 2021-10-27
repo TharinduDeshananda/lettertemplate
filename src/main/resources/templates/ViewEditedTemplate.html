@@ -8,8 +8,8 @@
 </head>
 <body>
 
-<form action="handlnewSubmitForm" method="POST" id="contentForm">
-    <input type="submit" value="Submit Edits"><br>
+<form action="" method="POST" id="contentForm">
+    <input type="submit" value="Print Content"><br>
     <input type="text" name="hiddenContent" id="hiddenContent">
     <div th:utext="${templateContent}"
          contenteditable="false"
@@ -18,8 +18,6 @@
     ></div>
 
 </form>
-
-
 
 </body>
 </html>
