@@ -38,15 +38,10 @@ public class MainController {
     }
 
     @PostMapping("/handleNewContent")
-    public String handleNewContent(@RequestParam("htmlContent") String htmlContent, Model model, RedirectAttributes redirectAttributes){
-        ST template = new ST(htmlContent,'$','$');
-        List<TemplateAttribute> attributeList = HtmlContentHandler.getAttributeList(template);
-        redirectAttributes.addFlashAttribute("attributeList",attributeList);
-        redirectAttributes.addFlashAttribute("originalHtmlContent",htmlContent);
+    public String handleNewContent(@RequestParam("htmlContent") String htmlContent, Model model){
+        //htmlContent = HtmlContentHandler.replaceHashSymbols(htmlContent);
         htmlContent = HtmlContentHandler.insertTextAreaToString(htmlContent);
-
         model.addAttribute("templateContent",htmlContent);
-
         return "newTemplateView";
     }
 

@@ -2,11 +2,14 @@ package com.example.letter.lettertemplate.contentHandlers;
 
 import org.antlr.runtime.Token;
 import org.antlr.runtime.TokenStream;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.compiler.STLexer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class HtmlContentHandler {
 
@@ -23,6 +26,20 @@ public class HtmlContentHandler {
 
         return template.render();
     }
+
+    public static String replaceHashSymbols(String htmlContent){
+        StringBuilder htmlString = new StringBuilder(htmlContent);
+
+        Pattern pattern = Pattern.compile("#{3,}");
+        Matcher matcher = pattern.matcher(htmlString);
+        while(matcher.find()){
+            int length = matcher.group().length()>5? matcher.group().length():5;
+            String fieldName = RandomStringUtils.random(length,true,false);
+            htmlString.replace(matcher.start(),matcher.end(),"$"+fieldName+"-1-"+length+"-$");
+        }
+        return htmlString.toString();
+    }
+
 
     public static List<TemplateAttribute> getAttributeList(ST template){
         List<TemplateAttribute> expressions = new ArrayList<>();
