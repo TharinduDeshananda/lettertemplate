@@ -1,5 +1,6 @@
 package com.example.letter.lettertemplate;
 
+import com.example.letter.lettertemplate.contentHandlers.TemplateFileHandler;
 import com.mongodb.client.MongoClient;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.CommandLineRunner;
@@ -58,9 +59,14 @@ public class LettertemplateApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		File convFile = new File("/templates/");
+		File convFile = new File("/templateFiles/");
 		convFile.mkdirs();
 		System.out.println("directory created "+convFile.exists());
+	}
+
+	@Bean("templateFileBean")
+	public TemplateFileHandler templateFileHandler(){
+		return new TemplateFileHandler("/templateFiles/");
 	}
 
 
