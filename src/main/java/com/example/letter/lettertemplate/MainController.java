@@ -4,6 +4,7 @@ package com.example.letter.lettertemplate;
 import com.example.letter.lettertemplate.contentHandlers.HtmlContentHandler;
 import com.example.letter.lettertemplate.contentHandlers.TemplateAttribute;
 import com.example.letter.lettertemplate.contentHandlers.TemplateFileHandler;
+import org.apache.commons.io.FilenameUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -31,37 +32,12 @@ public class MainController {
     @Autowired
     private TemplateFileHandler fileHandler;
 
-
-    //get to the home page. displays existing letter templates to the user to choose.
     @GetMapping("/")
     public String homePage(Model model){
+        List<String> temlplateNames = fileHandler.getAllHtmlFileNames();
+        model.addAttribute("templateNames",temlplateNames);
         return "newHome";
     }
-
-    @RequestMapping("/crf")
-    @ResponseBody
-    public ResponseEntity createAFile(){
-        boolean state = fileHandler.createLetterTemplate("file1.html","<p>Hello World!!!</P>");
-        return ResponseEntity.ok(state);
-    }
-
-    @RequestMapping("/gf")
-    @ResponseBody
-    public ResponseEntity getAllFiles(){
-
-        List<String> files = fileHandler.getAllHtmlFileNames();
-        return ResponseEntity.ok(files);
-    }
-
-    @RequestMapping("/gc")
-    @ResponseBody
-    public ResponseEntity getContent(){
-
-        String content = fileHandler.getHtmlContentByFileName("file1");
-        return ResponseEntity.ok(content);
-    }
-
-
 
     @PostMapping("/handleNewContent")
     public String handleNewContent(@RequestParam("htmlContent") String htmlContent, Model model){
@@ -71,33 +47,33 @@ public class MainController {
         return "newTemplateView";
     }
 
-    @PostMapping("/handlnewSubmitForm")
-    public String handlnewSubmitForm(@RequestParam HashMap<String,String> map,Model model){
+    @PostMapping("/saveTemplateFile")
+    public String saveHtmlFile(@RequestParam("hiddenContent")String htmlContentWithTextArea,
+                               @RequestParam("templateName")String templateName){
+        fileHandler.createLetterTemplate(templateName+".html",htmlContentWithTextArea);
+        return "redirect:/";
+    }
+
+    @GetMapping("/getTemplate/{templateName}")
+    public String getTemplate(@PathVariable("templateName")String templateName,Model model){
+        String htmlContent = fileHandler.getHtmlContentByFileName(FilenameUtils.getBaseName(templateName));
+        model.addAttribute("templateContent",htmlContent);
+        return "ViewEditedTemplate";
+    }
+
+    @PostMapping("/handleContent")
+    public String handlnewSubmitFormContent(@RequestParam HashMap<String,String> map,Model model){
         Document doc = Jsoup.parse(map.get("hiddenContent"));
         Elements textAreas = doc.select("textarea");
         for(Element element:textAreas){
             String inputName = element.attr("name");
             element.replaceWith(new TextNode(map.get(inputName)));
         }
-
-        //
         model.addAttribute("templateContent",doc.html());
 
         return "ViewEditedTemplate";
     }
 
-
-
-
-
-
-//    public List<LetterTemplateDto> letterListToDtoList(List<LetterTemplate> letters){
-//        return letters.stream().map(letter->modelMapper.map(letter,LetterTemplateDto.class)).collect(Collectors.toList());
-//    }
-//
-//    public LetterTemplateDto letterToLetterDto(LetterTemplate letter){
-//        return modelMapper.map(letter,LetterTemplateDto.class);
-//    }
 
 }
 

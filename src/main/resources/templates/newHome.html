@@ -23,19 +23,44 @@
     <script src="https://kothing.github.io/editor/dist/kothing-editor.min.js"></script>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <style>
+        .item:hover     {
 
+                        transform: scale(1.01);
+                        cursor: pointer;
+                        transition-delay: 100ms;
+                        transition-duration: 500ms;
+                }
+
+    </style>
 </head>
 <body>
 
-<form action="handleNewContent" method="POST" id="htmlForm">
-    <input type="text" name="htmlContent"  id="htmlContent">
-    <input type="submit" value="post letter content">
-</form>
+<div class="container-sm">
+
+    <h3>Available Templates</h3>
+    <div class="container-sm" th:each="templateName:${templateNames}">
+        <a th:href="@{'/getTemplate/' + ${templateName}}"><h5 class="bg-light py-1 px-5 hover-shadow item" th:text="${templateName}"></h5></a>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h4>Create a Template</h4></div>
+        <div class="card-body">
+            <form action="handleNewContent" method="POST" id="htmlForm">
+                <input type="text" name="htmlContent"  id="htmlContent" hidden="true">
+                <input type="submit" value="Create Template" class="btn btn-primary">
+
+            </form>
 
 
-<br><br>
-<div id="sample" style="margin: auto;">Hi</div>
+            <br><br>
+            <div id="sample" style="margin: auto;">Hi</div>
 
+        </div>
+    </div>
+
+
+</div>
 
 
 
