@@ -71,10 +71,21 @@ public class MainController {
         }
         model.addAttribute("templateContent",doc.html());
 
-        return "ViewEditedTemplate";
+        return "showContent";
     }
 
+    @PostMapping("/mailme")
+    public String mailMe(@RequestParam("hiddenContent")String htmlContent,Model model){
 
+        model.addAttribute("htmlContent",htmlContent);
+        return "mailMeUserFormPage";
+    }
+
+    @PostMapping("/sendEmail")
+    public String sendEmail(){
+
+        return "redirect:/";
+    }
 }
 
 

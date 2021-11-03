@@ -35,7 +35,7 @@ public class HtmlContentHandler {
         while(matcher.find()){
             int length = matcher.group().length()>5? matcher.group().length():5;
             String fieldName = RandomStringUtils.random(length,true,false);
-            htmlString.replace(matcher.start(),matcher.end(),"$"+fieldName+"-1-"+length+"-$");
+            htmlString.replace(matcher.start(),matcher.end(),"$"+fieldName+"-1-"+length+"$");
         }
         return htmlString.toString();
     }

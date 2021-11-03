@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<form action="handleContent" method="post" id="contentForm">
+<form action="/handleContent" method="POST" id="contentForm">
     <input type="submit" value="Print Content"><br>
     <input type="text" name="hiddenContent" id="hiddenContent">
     <div th:utext="${templateContent}"
