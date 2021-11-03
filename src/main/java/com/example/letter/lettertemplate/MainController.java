@@ -4,6 +4,7 @@ package com.example.letter.lettertemplate;
 import com.example.letter.lettertemplate.contentHandlers.HtmlContentHandler;
 import com.example.letter.lettertemplate.contentHandlers.TemplateAttribute;
 import com.example.letter.lettertemplate.contentHandlers.TemplateFileHandler;
+import com.example.letter.lettertemplate.htmlhandler.HtmlHandler;
 import org.apache.commons.io.FilenameUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -20,7 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.stringtemplate.v4.ST;
 
 
-
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
 
@@ -82,7 +83,16 @@ public class MainController {
     }
 
     @PostMapping("/sendEmail")
-    public String sendEmail(){
+    public String sendEmail(HttpServletResponse response,@RequestParam("htmlContent")String htmlContent,
+                            @RequestParam("userName")String userName,@RequestParam("userEmail")String email){
+        response.setHeader("Content-Type","application/pdf");
+        response.setHeader("Content-Disposition","attachment; filename=mydoc.pdf");
+        try{
+            HtmlHandler.htmlToPdf(htmlContent,null,response.getOutputStream());
+        }catch(Exception e){
+            System.out.println(e);
+            return "redirect:/";
+        }
 
         return "redirect:/";
     }
