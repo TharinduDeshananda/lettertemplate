@@ -26,6 +26,9 @@ import org.stringtemplate.v4.ST;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.List;
 
@@ -83,22 +86,27 @@ public class MainController {
     }
 
     @PostMapping("/mailme")
-    public String mailMe(@RequestParam("hiddenContent")String htmlContent,Model model){
+    public String mailMe(@RequestParam("hiddenContent")String htmlContent, Model model, HttpSession session){
 
-        model.addAttribute("htmlContent",htmlContent);
+        //model.addAttribute("htmlContent",htmlContent);
+        session.setAttribute("htmlContent",htmlContent);
         return "mailMeUserFormPage";
     }
 
     @PostMapping("/sendEmail")
-    public String sendEmail(HttpServletResponse response, @RequestParam("htmlContent")String htmlContent, HttpServletRequest request
+    public String sendEmail(HttpServletResponse response, HttpServletRequest request
                             // @RequestParam("userName")String userName,@RequestParam("userEmail")String email
     ){
         response.setHeader("Content-Type","application/pdf");
         response.setHeader("Content-Disposition","attachment; filename=mydoc.pdf");
+        String htmlContent = (String)request.getSession().getAttribute("htmlContent");
         try{
-            HtmlHandler.htmlToPdf(htmlContent,null,response.getOutputStream());
 
 
+            File tempFile = File.createTempFile("MyDoc","pdf");
+            FileOutputStream outputStream = new FileOutputStream(tempFile);
+
+            HtmlHandler.htmlToPdf(htmlContent,null,outputStream);
 
             String email=request.getParameter("email");
             String name = request.getParameter("name");
@@ -118,8 +126,8 @@ public class MainController {
             helper.setTo(email);
             helper.setText(content,true);
             helper.setSubject("letter generator");
-            // helper.addAttachment("MyDoc.pdf",response.getHeader());
-
+            //helper.addAttachment("MyDoc.pdf",response.getHeader());
+            helper.addAttachment("MyDoc.pdf",tempFile);
 
 
 
