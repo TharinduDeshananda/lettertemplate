@@ -62,15 +62,17 @@ public class HtmlContentHandler {
     }
 
     public static String addPaddingDiv(String htmlContent,int margin_v,int margin_h){
+        Element divElement = new Element("div");
         Document doc = Jsoup.parse(htmlContent);
-        Element divElem = new Element(Tag.valueOf("div"),"");
-        divElem.attr("style","padding: "+margin_v+"rem "+margin_h+"rem;");
-        Elements allElements = doc.getAllElements();
-        for(Element element: allElements){
-            divElem.appendChild(element);
+
+        for(Element child:doc.body().children()){
+            divElement.appendChild(child);
+
         }
-        System.out.println(divElem.html());
-        return divElem.html();
+        divElement.attr("style","padding: 5rem 5rem;");
+        divElement.attr("style","margin: 5rem 5rem;");
+        System.out.println(Jsoup.parse(divElement.toString()));
+        return divElement.toString();
     }
 
 

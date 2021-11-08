@@ -55,10 +55,9 @@ public class MainController {
             ,@RequestParam("margin_v")int margin_v,@RequestParam("margin_h")int margin_h,
                                    Model model){
         //htmlContent = HtmlContentHandler.replaceHashSymbols(htmlContent);
-        //htmlContent = HtmlContentHandler.addPaddingDiv(htmlContent,margin_v,margin_h);
-        //System.out.println(margin_h);
+        htmlContent = HtmlContentHandler.addPaddingDiv(htmlContent,margin_v,margin_h);
         htmlContent = HtmlContentHandler.insertTextAreaToString(htmlContent);
-
+        System.out.println(htmlContent);
         model.addAttribute("templateContent",htmlContent);
         return "newTemplateView";
     }
@@ -82,6 +81,12 @@ public class MainController {
         String htmlContent = fileHandler.getHtmlContentByFileName(FilenameUtils.getBaseName(templateName));
         model.addAttribute("templateContent",htmlContent);
         return "editTemplate";
+    }
+
+    @RequestMapping("/deleteTemplate/{templateName}")
+    public String deleteTemplate(@PathVariable("templateName")String templateName){
+        fileHandler.deleteTemplateFileByName(templateName);
+        return "redirect:/";
     }
 
     @PostMapping("/saveEditedTamplate")

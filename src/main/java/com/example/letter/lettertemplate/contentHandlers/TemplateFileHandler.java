@@ -73,4 +73,16 @@ public class TemplateFileHandler {
 
     }
 
+    public boolean deleteTemplateFileByName(String fileName){
+        try{
+            File parentDir = new File(dirPath);
+            File file = new File(parentDir,fileName);
+            if(!file.exists())return false;
+            return file.delete();
+        }catch(Exception e){
+            System.out.println(e);
+        }
+        return false;
+    }
+
 }
