@@ -55,8 +55,8 @@ public class MainController {
             ,@RequestParam("margin_v")int margin_v,@RequestParam("margin_h")int margin_h,
                                    Model model){
         //htmlContent = HtmlContentHandler.replaceHashSymbols(htmlContent);
-        htmlContent = HtmlContentHandler.addPaddingDiv(htmlContent,margin_v,margin_h);
-        System.out.println(margin_h);
+        //htmlContent = HtmlContentHandler.addPaddingDiv(htmlContent,margin_v,margin_h);
+        //System.out.println(margin_h);
         htmlContent = HtmlContentHandler.insertTextAreaToString(htmlContent);
 
         model.addAttribute("templateContent",htmlContent);
@@ -74,7 +74,7 @@ public class MainController {
     public String getTemplate(@PathVariable("templateName")String templateName,Model model){
         String htmlContent = fileHandler.getHtmlContentByFileName(FilenameUtils.getBaseName(templateName));
         model.addAttribute("templateContent",htmlContent);
-        return "editTemplate";
+        return "ViewEditedTemplate";
     }
 
     @GetMapping("/editTemplate/{templateName}")

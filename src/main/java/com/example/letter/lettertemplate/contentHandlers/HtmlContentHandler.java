@@ -69,7 +69,7 @@ public class HtmlContentHandler {
         for(Element element: allElements){
             divElem.appendChild(element);
         }
-
+        System.out.println(divElem.html());
         return divElem.html();
     }
 

@@ -104,7 +104,7 @@
     <h3>Available Templates</h3>
     <div class="container-sm" th:each="templateName:${templateNames}">
         <a th:href="@{'/getTemplate/' + ${templateName}}"><span class="bg-light py-1 px-5 hover-shadow item" th:text="${templateName}"></span></a>
-        | <a th:href="@{'/editTemplate/' + ${templateName}}"><span class="bg-light py-1 px-5 hover-shadow item" th:text="'Edit'"></span></a>
+<!--        | <a th:href="@{'/editTemplate/' + ${templateName}}"><span class="bg-light py-1 px-5 hover-shadow item" th:text="'Edit'"></span></a>-->
     </div>
 
     <div class="card">
