@@ -77,11 +77,8 @@
     <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
 
     <script>
-      let margin_v=5;
-      let margin_h=5;
       tinymce.init({
         selector: '#mytextarea',
-        content_style: `body { margin: ${margin_v}rem ${margin_h}rem; }`,
         plugins: 'advlist link image imagetools lists autoresize autosave hr pagebreak table noneditable paste',
         toolbar: 'restoredraft hr image pagebreak noneditable undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat ',
         table_cell_advtab: true,
@@ -101,26 +98,17 @@
 
 <div class="container-sm">
 
-    <h3>Available Templates</h3>
-    <div class="container-sm" th:each="templateName:${templateNames}">
-        <a th:href="@{'/getTemplate/' + ${templateName}}"><span class="bg-light py-1 px-5 hover-shadow item" th:text="${templateName}"></span></a>
-        | <a th:href="@{'/editTemplate/' + ${templateName}}"><span class="bg-light py-1 px-5 hover-shadow item" th:text="'Edit'"></span></a>
-    </div>
-
+    <h3>Edit Template</h3>
     <div class="card">
-        <div class="card-header"><h4>Create a Template</h4></div>
+
         <div class="card-body">
-            <form action="handleNewContent" method="POST" id="htmlForm">
+            <form action="saveEditedTamplate" method="POST" id="htmlForm">
                 <input type="text" name="htmlContent"  id="htmlContent" hidden="true">
-                <input type="submit" value="Create Template" class="btn btn-primary">
-                <label>Vertical Margin</label>
-                <input type="range" id="marginSlider_v" name="margin_v" min="0" max="10" value="1" step="1">
-                <label>Horizontal Margin</label>
-                <input type="range" id="marginSlider_h" name="margin_h" min="0" max="10" value="1" step="1">
+                <input type="submit" value="Save Changes" class="btn btn-primary">
 
             </form>
 
-            <div id="mytextarea" class="page">Enter text here</div>
+            <textarea id="mytextarea" class="page">Enter text here</textarea>
             <br><br>
 
 
@@ -135,20 +123,22 @@
 </body>
 </html>
 
+<script th:inline="javascript">
+/*<![CDATA[*/
+
+    var templateContent = /*[[${templateContent}]]*/ 'default';
+    console.log(templateContent);
+
+/*]]>*/
+</script>
+<script>
+console.log(templateContent);
+    tinymce.get("mytextarea").setContent(templateContent);
+
+</script>
+
 
 <script>
-    let slider_v = document.getElementById("marginSlider_v");
-    let slider_h = document.getElementById("marginSlider_h");
-    slider_v.oninput=(e)=>{
-        margin_v=e.target.value;
-        console.log(tinymce.get("mytextarea").getContent());
-        tinyMCE.editors[0].contentWindow.document.body.style.margin = `${margin_v}rem ${margin_h}rem`;
-    };
-    slider_h.oninput=(e)=>{
-        margin_h=e.target.value;
-        console.log(tinymce.get("mytextarea").getContent());
-        tinyMCE.editors[0].contentWindow.document.body.style.margin = `${margin_v}rem ${margin_h}rem`;
-    };
 
     htmlForm.onsubmit=()=>{
         htmlContent.value = tinymce.get("mytextarea").getContent();

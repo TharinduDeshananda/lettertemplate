@@ -51,9 +51,14 @@ public class MainController {
     }
 
     @PostMapping("/handleNewContent")
-    public String handleNewContent(@RequestParam("htmlContent") String htmlContent, Model model){
+    public String handleNewContent(@RequestParam("htmlContent") String htmlContent
+            ,@RequestParam("margin_v")int margin_v,@RequestParam("margin_h")int margin_h,
+                                   Model model){
         //htmlContent = HtmlContentHandler.replaceHashSymbols(htmlContent);
+        htmlContent = HtmlContentHandler.addPaddingDiv(htmlContent,margin_v,margin_h);
+        System.out.println(margin_h);
         htmlContent = HtmlContentHandler.insertTextAreaToString(htmlContent);
+
         model.addAttribute("templateContent",htmlContent);
         return "newTemplateView";
     }
@@ -69,7 +74,20 @@ public class MainController {
     public String getTemplate(@PathVariable("templateName")String templateName,Model model){
         String htmlContent = fileHandler.getHtmlContentByFileName(FilenameUtils.getBaseName(templateName));
         model.addAttribute("templateContent",htmlContent);
-        return "ViewEditedTemplate";
+        return "editTemplate";
+    }
+
+    @GetMapping("/editTemplate/{templateName}")
+    public String editTemplate(@PathVariable("templateName")String templateName,Model model){
+        String htmlContent = fileHandler.getHtmlContentByFileName(FilenameUtils.getBaseName(templateName));
+        model.addAttribute("templateContent",htmlContent);
+        return "editTemplate";
+    }
+
+    @PostMapping("/saveEditedTamplate")
+    public String saveEditedTemplate(){
+
+        return "redirect:/";
     }
 
     @PostMapping("/handleContent")
@@ -122,7 +140,8 @@ public class MainController {
                             "here we attach your pdf...."+
                             "<br><hr>" ;
 
-            helper.setFrom("chathurikatestapp@gmail.com","Letter Generating Tool");
+            //helper.setFrom("chathurikatestapp@gmail.com","Letter Generating Tool");
+            helper.setFrom("tdeshananda@gmail.com","Letter Generating Tool");
             helper.setTo(email);
             helper.setText(content,true);
             helper.setSubject("letter generator");

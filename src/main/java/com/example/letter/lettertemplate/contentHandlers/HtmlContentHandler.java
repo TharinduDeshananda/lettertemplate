@@ -3,6 +3,12 @@ package com.example.letter.lettertemplate.contentHandlers;
 import org.antlr.runtime.Token;
 import org.antlr.runtime.TokenStream;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.parser.Tag;
+import org.jsoup.select.Elements;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.compiler.STLexer;
 
@@ -54,6 +60,19 @@ public class HtmlContentHandler {
             }
         return expressions;
     }
+
+    public static String addPaddingDiv(String htmlContent,int margin_v,int margin_h){
+        Document doc = Jsoup.parse(htmlContent);
+        Element divElem = new Element(Tag.valueOf("div"),"");
+        divElem.attr("style","padding: "+margin_v+"rem "+margin_h+"rem;");
+        Elements allElements = doc.getAllElements();
+        for(Element element: allElements){
+            divElem.appendChild(element);
+        }
+
+        return divElem.html();
+    }
+
 
 
 }
