@@ -67,7 +67,6 @@ public class HtmlContentHandler {
 
         for(Element child:doc.body().children()){
             divElement.appendChild(child);
-
         }
         divElement.attr("style","padding: 5rem 5rem;");
         divElement.attr("style","margin: 5rem 5rem;");

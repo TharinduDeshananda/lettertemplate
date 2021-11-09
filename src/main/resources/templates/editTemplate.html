@@ -76,9 +76,23 @@
 
     <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
 
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        var templateContent = /*[[${templateContent}]]*/ 'default';
+        console.log(templateContent);
+
+        /*]]>*/
+    </script>
+
     <script>
       tinymce.init({
         selector: '#mytextarea',
+          setup: function (editor) {
+              editor.on('init', function (e) {
+                  editor.setContent(templateContent);
+              });
+          },
         plugins: 'advlist link image imagetools lists autoresize autosave hr pagebreak table noneditable paste',
         toolbar: 'restoredraft hr image pagebreak noneditable undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat ',
         table_cell_advtab: true,
@@ -102,13 +116,15 @@
     <div class="card">
 
         <div class="card-body">
-            <form action="saveEditedTamplate" method="POST" id="htmlForm">
+            <form action="saveEditedTemplate" method="POST" id="htmlForm">
                 <input type="text" name="htmlContent"  id="htmlContent" hidden="true">
                 <input type="submit" value="Save Changes" class="btn btn-primary">
+                <input type="text" name="templateFileName" th:value="${templateFileName}">
 
             </form>
 
-            <textarea id="mytextarea" class="page">Enter text here</textarea>
+            <textarea id="mytextarea" class="page">
+          </textarea>
             <br><br>
 
 
@@ -122,17 +138,6 @@
 
 </body>
 </html>
-
-<script th:inline="javascript">
-/*<![CDATA[*/
-
-    var templateContent = /*[[${templateContent}]]*/ 'default';
-    console.log(templateContent);
-
-/*]]>*/
-</script>
-
-
 
 <script>
 

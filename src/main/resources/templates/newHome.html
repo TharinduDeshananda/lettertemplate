@@ -105,9 +105,14 @@
     <div class="container-sm" th:each="templateName:${templateNames}">
         <div class="bg-light py-1 px-5 hover-shadow item">
             <a th:href="@{'/deleteTemplate/' + ${templateName}}"><span class="bg-light py-1 px-5 hover-shadow item">[X]</span></a>
+            <a th:href="@{'/editTemplate/' + ${templateName}}"><span class="bg-light py-1 px-5 hover-shadow item">[ EDIT ]</span></a>
+
             <a th:href="@{'/getTemplate/' + ${templateName}}"><span class="bg-light py-1 px-5 hover-shadow item" th:text="${templateName}"></span></a>
 
+
+
         </div>
+        <br>
 
     </div>
 

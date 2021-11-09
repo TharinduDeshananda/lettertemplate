@@ -7,6 +7,7 @@ import lombok.ToString;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -76,6 +77,8 @@ public class TemplateFileHandler {
     public boolean deleteTemplateFileByName(String fileName){
         try{
             File parentDir = new File(dirPath);
+            File tempFile = new File(parentDir,fileName+".html");
+
             File file = new File(parentDir,fileName);
             if(!file.exists())return false;
             return file.delete();
@@ -85,4 +88,36 @@ public class TemplateFileHandler {
         return false;
     }
 
+
+    public void replaceTemplate(String fileName, String htmlContent) {
+        File fileToBeModified = new File(dirPath);
+
+        String oldContent = "";
+        BufferedReader reader = null;
+        FileWriter writer = null;
+
+        try
+        {
+            reader = new BufferedReader(new FileReader(fileToBeModified));
+            //Reading all the lines of input text file into oldContent
+            String line = reader.readLine();
+            while (line != null)
+            {
+                oldContent = oldContent + line + System.lineSeparator();
+                line = reader.readLine();
+            }
+            //Replacing oldString with newString in the oldContent
+            String newContent = oldContent.replaceAll(htmlContent, htmlContent);
+            //Rewriting the input text file with newContent
+            writer = new FileWriter(fileToBeModified);
+            writer.write(newContent);
+            reader.close();
+            writer.close();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+    }
 }
