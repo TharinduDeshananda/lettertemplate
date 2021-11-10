@@ -85,4 +85,17 @@ public class TemplateFileHandler {
         return false;
     }
 
+    public boolean replaceTemplateFileByName(String templateFileName,String htmlContent) {
+        try {
+            File parentDir = new File(dirPath);
+            File tempFile = new File(parentDir,templateFileName);
+            if(!tempFile.exists())return false;
+            FileUtils.writeStringToFile(tempFile,htmlContent,false);
+            return true;
+        } catch (Exception e) {
+        }
+
+        return false;
+    }
+
 }

@@ -91,8 +91,11 @@ public class MainController {
     }
 
     @PostMapping("/saveEditedTamplate")
-    public String saveEditedTemplate(){
-
+    public String saveEditedTemplate(@RequestParam("templateFileName") String templateFileName,
+                                     @RequestParam("htmlContent")String htmlContent)throws Exception{
+        htmlContent = HtmlContentHandler.insertTextAreaToString(htmlContent);
+        boolean status = fileHandler.replaceTemplateFileByName(templateFileName,htmlContent);
+        if(!status)throw new Exception("Non existing template file");
         return "redirect:/";
     }
 
