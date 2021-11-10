@@ -57,7 +57,7 @@ public class MainController {
         //htmlContent = HtmlContentHandler.replaceHashSymbols(htmlContent);
         htmlContent = HtmlContentHandler.addPaddingDiv(htmlContent,margin_v,margin_h);
         htmlContent = HtmlContentHandler.insertTextAreaToString(htmlContent);
-        System.out.println(htmlContent);
+        System.out.println(margin_h);
         model.addAttribute("templateContent",htmlContent);
         return "newTemplateView";
     }

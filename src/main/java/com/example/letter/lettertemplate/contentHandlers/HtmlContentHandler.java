@@ -6,9 +6,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
-import org.jsoup.parser.Tag;
-import org.jsoup.select.Elements;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.compiler.STLexer;
 
@@ -68,8 +65,8 @@ public class HtmlContentHandler {
         for(Element child:doc.body().children()){
             divElement.appendChild(child);
         }
-        divElement.attr("style","padding: 5rem 5rem;");
-        divElement.attr("style","margin: 5rem 5rem;");
+        //divElement.attr("style","padding: "+margin_v+"rem "+margin_h+"rem;");
+        divElement.attr("style","margin: "+margin_v+"rem "+margin_h+"rem;");
         System.out.println(Jsoup.parse(divElement.toString()));
         return divElement.toString();
     }
