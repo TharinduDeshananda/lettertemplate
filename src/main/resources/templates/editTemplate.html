@@ -116,7 +116,7 @@
     <div class="card">
 
         <div class="card-body">
-            <form action="saveEditedTemplate" method="POST" id="htmlForm">
+            <form action="/saveEditedTamplate" method="POST" id="htmlForm">
                 <input type="text" name="htmlContent"  id="htmlContent" hidden="true">
                 <input type="submit" value="Save Changes" class="btn btn-primary">
                 <input type="text" name="templateFileName" th:value="${templateFileName}">
