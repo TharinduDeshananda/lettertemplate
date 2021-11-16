@@ -56,7 +56,7 @@ public class MainController {
                                    Model model){
         //htmlContent = HtmlContentHandler.replaceHashSymbols(htmlContent);
         htmlContent = HtmlContentHandler.addPaddingDiv(htmlContent,margin_v,margin_h);
-        htmlContent = HtmlContentHandler.insertTextAreaToString(htmlContent);
+        //htmlContent = HtmlContentHandler.insertTextAreaToString(htmlContent);
         System.out.println(margin_h);
         model.addAttribute("templateContent",htmlContent);
         return "newTemplateView";
@@ -72,7 +72,10 @@ public class MainController {
     @GetMapping("/getTemplate/{templateName}")
     public String getTemplate(@PathVariable("templateName")String templateName,Model model){
         String htmlContent = fileHandler.getHtmlContentByFileName(FilenameUtils.getBaseName(templateName));
-        model.addAttribute("templateContent",htmlContent);
+
+        String FormhtmlContent = HtmlContentHandler.generateForm(htmlContent);
+        model.addAttribute("originalContent",htmlContent);
+        model.addAttribute("templateContent",FormhtmlContent);
         return "ViewEditedTemplate";
     }
 
@@ -93,7 +96,7 @@ public class MainController {
     @PostMapping("/saveEditedTamplate")
     public String saveEditedTemplate(@RequestParam("templateFileName") String templateFileName,
                                      @RequestParam("htmlContent")String htmlContent)throws Exception{
-        htmlContent = HtmlContentHandler.insertTextAreaToString(htmlContent);
+        //htmlContent = HtmlContentHandler.insertTextAreaToString(htmlContent);
         boolean status = fileHandler.replaceTemplateFileByName(templateFileName,htmlContent);
         if(!status)throw new Exception("Non existing template file");
         return "redirect:/";
@@ -101,12 +104,33 @@ public class MainController {
 
     @PostMapping("/handleContent")
     public String handlnewSubmitFormContent(@RequestParam HashMap<String,String> map,Model model){
-        Document doc = Jsoup.parse(map.get("hiddenContent"));
-        Elements textAreas = doc.select("textarea");
-        for(Element element:textAreas){
-            String inputName = element.attr("name");
-            element.replaceWith(new TextNode(map.get(inputName)));
-        }
+
+        String originalContent = map.get("originalContent");
+        String replacedContent = HtmlContentHandler.replaceFormContent(originalContent,map);
+
+        Document doc = Jsoup.parse(replacedContent);
+//        doc.head().append("<style type=\"text/css\">\n" +
+//                "      img   {\n" +
+//                "         page-break-inside:avoid; \n" +
+//                "         page-break-after:auto;\n" +
+//                "\n" +
+//                "      }\n" +
+//                "\n" +
+//                "      .fff  {\n" +
+//                "\n" +
+//                "\n" +
+//                "         page-break-inside:avoid; \n" +
+//                "         page-break-after:auto;\n" +
+//                "\n" +
+//                "      }\n" +
+//                "</style>");
+
+//        Elements textAreas = doc.select("textarea");
+//        for(Element element:textAreas){
+//            String inputName = element.attr("name");
+//            element.replaceWith(new TextNode(map.get(inputName)));
+//        }
+
         model.addAttribute("templateContent",doc.html());
 
         return "showContent";
@@ -133,6 +157,12 @@ public class MainController {
             File tempFile = File.createTempFile("MyDoc","pdf");
             FileOutputStream outputStream = new FileOutputStream(tempFile);
 
+            Document doc = Jsoup.parse(htmlContent);
+            doc = HtmlContentHandler.makeElementUnbreakable(doc);
+
+
+            htmlContent = doc.html();
+            System.out.println(htmlContent);
             HtmlHandler.htmlToPdf(htmlContent,null,outputStream);
 
             String email=request.getParameter("email");

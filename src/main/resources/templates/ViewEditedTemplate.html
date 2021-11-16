@@ -10,7 +10,8 @@
 
 <form action="/handleContent" method="POST" id="contentForm">
     <input type="submit" value="Print Content"><br>
-    <input type="text" name="hiddenContent" id="hiddenContent">
+    <input type="text" name="hiddenContent" id="hiddenContent" hidden>
+    <input type="text" name="originalContent" id="originalContent" hidden>
     <div th:utext="${templateContent}"
          contenteditable="false"
          id="contentBoxId" class="container-md shadow p-3 mb-5 bg-body rounded my-5"
@@ -21,15 +22,29 @@
 
 </body>
 </html>
+
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+
+    var originalContent = /*[[${originalContent}]]*/ 'default';
+    console.log(originalContent);
+
+/*]]>*/
+</script>
+
 <script type="text/javascript">
 
         let contentBox = document.getElementById("contentBoxId");
         let formElem = document.getElementById("contentForm");
         let hiddenField = document.getElementById("hiddenContent");
+        let hiddenOriginalContentField = document.getElementById("originalContent");
 
         formElem.onsubmit=()=>{
                 hiddenField.value = contentBox.innerHTML;
+                hiddenOriginalContentField.value=originalContent;
                 return true;
         };
 
 </script>
+

@@ -24,6 +24,7 @@ public class TemplateFileHandler {
 
     public boolean createLetterTemplate(String fileName,String htmlContent){
         File parentDir = new File(dirPath);
+
         FileWriter fileWriter=null;
         System.out.println("template directory exists: "+parentDir.exists());
         File tempFile = new File(parentDir,fileName);
@@ -47,6 +48,7 @@ public class TemplateFileHandler {
 
         try{
             File parentDir = new File(dirPath);
+            System.out.println(parentDir.getAbsolutePath());
             System.out.println("is directory : "+parentDir.isDirectory());
             String[] htmlFileNames = parentDir.list((File dir,String filename)->{
                 if(FilenameUtils.getExtension(filename).equalsIgnoreCase("html"))return true;

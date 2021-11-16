@@ -6,15 +6,31 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.compiler.STLexer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class HtmlContentHandler {
+
+    public static String replaceFormContent(String originalContent, Map<String,String> map){
+        ST template = new ST(originalContent,'$','$');
+        List<TemplateAttribute> attrList = getAttributeList(template);
+
+        for(TemplateAttribute attr : attrList){
+            String inpuTName = attr.getAttributeName();
+            //template.add(attr.getInitName(),map.get(inpuTName));
+            template.add(attr.getInitName(),"<span class='fff'>"+map.get(inpuTName) +"</span>");
+        }
+
+
+        return template.render();
+    }
 
     public static String insertTextAreaToString(String htmlContent){
 
@@ -71,6 +87,33 @@ public class HtmlContentHandler {
         return divElement.toString();
     }
 
+    public static String generateForm(String htmlContentWithAttributeList){
+        ST template = new ST(htmlContentWithAttributeList,'$','$');
+        List<TemplateAttribute> attrList = getAttributeList(template);
+        Document doc = Jsoup.parse("<div id='mainDiv'></div>");
+        doc.getElementById("mainDiv");
+        for(TemplateAttribute attr: attrList){
+            doc.getElementById("mainDiv").append("<label>"+attr.getPlaceHolder()+"  : </label><br>" +
+                    "<textarea name='"+attr.getAttributeName()+"' cols='"+attr.getColsCount()+"' rows='"+attr.getRowsCount()+"'></textarea><br><br>");
+        }
+        return doc.body().html();
+    }
 
+    public static Document makeElementUnbreakable(Document doc){
+
+        Elements imgElements = doc.getElementsByTag("img");
+        Elements userElements = doc.getElementsByClass("fff");
+
+        for(Element element : imgElements){
+            element.attr("style",element.attr("style")+" page-break-inside:avoid; page-break-after:auto;");
+        }
+
+        for(Element element : userElements){
+            element.attr("style",element.attr("style")+" page-break-inside:avoid; page-break-after:auto;");
+        }
+
+
+        return doc;
+    }
 
 }
