@@ -101,18 +101,29 @@ public class HtmlContentHandler {
 
     public static Document makeElementUnbreakable(Document doc){
 
-        Elements imgElements = doc.getElementsByTag("img");
-        Elements userElements = doc.getElementsByClass("fff");
-
-        for(Element element : imgElements){
-            element.attr("style",element.attr("style")+" page-break-inside:avoid; page-break-after:auto;");
-        }
-
-        for(Element element : userElements){
-            element.attr("style",element.attr("style")+" page-break-inside:avoid; page-break-after:auto;");
-        }
-
-
+        doc.head().append("<style type=\"text/css\">\n" +
+                "      img   {\n" +
+                "         page-break-inside:avoid; \n" +
+                "         page-break-after:auto;\n" +
+                "\n" +
+                "      }\n" +
+                "\n" +
+                "      .fff  {\n" +
+                "\n" +
+                "\n" +
+                "         page-break-inside:avoid; \n" +
+                "         page-break-after:auto;\n" +
+                "\n" +
+                "      }\n" +
+                "\n" +
+                "      .specDiv {\n" +
+                "\n" +
+                "         background-color: lavender;\n" +
+                "         border: 2px solid red;\n" +
+                "\n" +
+                "         margin: 2px 2px;\n" +
+                "      }\n" +
+                "</style>");
         return doc;
     }
 

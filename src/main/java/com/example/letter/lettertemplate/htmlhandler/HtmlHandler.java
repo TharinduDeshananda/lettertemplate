@@ -5,59 +5,49 @@ import com.itextpdf.html2pdf.HtmlConverter;
 import com.itextpdf.html2pdf.resolver.font.DefaultFontProvider;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.font.FontProvider;
 import org.jsoup.Jsoup;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 public class HtmlHandler {
 
     public static void htmlToPdf(String htmlLetterContent,String textContentBack, OutputStream outputStream){
         try{
+            ByteArrayInputStream htmlContentIs = new ByteArrayInputStream(htmlLetterContent.getBytes(StandardCharsets.UTF_8));
 
-//            response.setHeader("Content-Type","application/pdf");
-//            response.setHeader("Content-Disposition","attachment; filename=mydoc.pdf");
+            ByteArrayOutputStream ms = new ByteArrayOutputStream();
+            PdfDocument pdfDocument = new PdfDocument(new PdfWriter(ms));
+            pdfDocument.setDefaultPageSize(PageSize.A4);
 
-            htmlLetterContent = htmlLetterContent.replaceAll("&"+"nbsp;", " ");
-            htmlLetterContent = htmlLetterContent.replaceAll(String.valueOf((char) 160), " ");
-
-//            textContentBack = textContentBack.replaceAll("&"+"nbsp;", " ");
-//            textContentBack = textContentBack.replaceAll(String.valueOf((char) 160), " ");
-
-            String xhtml= Jsoup.parse(htmlLetterContent).html();
-
-            String htmlString = xhtml;
+            HtmlConverter.convertToPdf(htmlContentIs,pdfDocument);
 
 
 
-            //PdfWriter pdfWriter = new PdfWriter(response.getOutputStream());
-            PdfWriter pdfWriter = new PdfWriter(outputStream);
-            ConverterProperties converterProperties = new ConverterProperties();
+            PdfDocument resultantDocument = new PdfDocument(new PdfWriter(outputStream));
+            resultantDocument.setDefaultPageSize(PageSize.A4);
+            pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(ms.toByteArray())));
+            for (int i = 1; i <= pdfDocument.getNumberOfPages(); i++) {
+                PdfPage page = pdfDocument.getPage(i);
+                PdfFormXObject formXObject = page.copyAsFormXObject(resultantDocument);
+                PdfCanvas pdfCanvas = new PdfCanvas(resultantDocument.addNewPage());
+                pdfCanvas.addXObject(formXObject);
 
-            FontProvider fontProvider = new DefaultFontProvider(true,true,true);
-            String[] fonts = {
-                    "src/main/resources/fonts/comic-sans-ms.ttf",
-                    "src/main/resources/fonts/arial.ttf",
-                    "src/main/resources/fonts/Garamond Regular.ttf",
-                    "src/main/resources/fonts/Georgia Regular font.ttf",
-                    "src/main/resources/fonts/ComicSansMS3.ttf"
+            }
+            pdfDocument.close();
+            resultantDocument.close();
 
-            };
-            fontProvider.addDirectory("src/main/resources/fonts");
-
-
-            converterProperties.setFontProvider(fontProvider);
-
-            PdfDocument pdfDocument = new PdfDocument(pdfWriter);
-
-            //For setting the PAGE SIZE
-            pdfDocument.setDefaultPageSize(new PageSize(PageSize.A4));
-
-            Document document = HtmlConverter.convertToDocument(htmlString, pdfDocument, converterProperties);
-            document.close();
 
         }catch(Exception e){
             System.out.println(e);
