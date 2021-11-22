@@ -179,8 +179,8 @@ public class MainController {
                             "here we attach your pdf...."+
                             "<br><hr>" ;
 
-            //helper.setFrom("chathurikatestapp@gmail.com","Letter Generating Tool");
-            helper.setFrom("tdeshananda@gmail.com","Letter Generating Tool");
+            helper.setFrom("chathurikatestapp@gmail.com","Letter Generating Tool");
+           // helper.setFrom("tdeshananda@gmail.com","Letter Generating Tool");
             helper.setTo(email);
             helper.setText(content,true);
             helper.setSubject("letter generator");
@@ -190,16 +190,11 @@ public class MainController {
             mailSender.send(message);
             System.out.println("Mail Sent");
 
-
-
-
-
-
-
         }catch(Exception e){
             System.out.println(e);
             return "redirect:/";
         }
+
 
         return "redirect:/";
     }
