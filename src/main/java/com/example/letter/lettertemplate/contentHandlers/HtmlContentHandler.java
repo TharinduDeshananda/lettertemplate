@@ -102,7 +102,7 @@ public class HtmlContentHandler {
     public static Document makeElementUnbreakable(Document doc){
 
         doc.head().append("<style type=\"text/css\">\n" +
-                "      img   {\n" +
+                "      img,tr,td   {\n" +
                 "         page-break-inside:avoid; \n" +
                 "         page-break-after:auto;\n" +
                 "\n" +

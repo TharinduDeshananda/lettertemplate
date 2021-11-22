@@ -81,7 +81,16 @@
       let margin_h=1;
       tinymce.init({
         selector: '#mytextarea',
+        init_instance_callback:(editor)=>{
+            console.log(editor);
+            let pageScript = document.createElement("script");
+            pageScript.src = "pagebreaker.js";
+            editor.dom.doc.head.appendChild(pageScript);
+            console.log('done adding script');
+        },
         content_style: `body { margin: ${margin_v}rem ${margin_h}rem; }`,
+        width:'21cm',
+        height:'29.7cm',
         plugins: 'advlist link image imagetools lists autoresize autosave hr pagebreak table noneditable paste',
         toolbar: 'restoredraft hr image pagebreak noneditable undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat ',
         table_cell_advtab: true,
@@ -127,7 +136,7 @@
 
             </form>
 
-            <div id="mytextarea" class="page">Enter text here</div>
+            <div id="mytextarea" class="page" style="margin:3 auto;">Enter text here</div>
             <br><br>
 
 
