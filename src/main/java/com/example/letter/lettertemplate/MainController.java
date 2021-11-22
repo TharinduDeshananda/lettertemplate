@@ -146,7 +146,7 @@ public class MainController {
 
     @PostMapping("/sendEmail")
     public String sendEmail(HttpServletResponse response, HttpServletRequest request
-                            // @RequestParam("userName")String userName,@RequestParam("userEmail")String email
+
     ){
         response.setHeader("Content-Type","application/pdf");
         response.setHeader("Content-Disposition","attachment; filename=mydoc.pdf");
@@ -184,7 +184,6 @@ public class MainController {
             helper.setTo(email);
             helper.setText(content,true);
             helper.setSubject("letter generator");
-            //helper.addAttachment("MyDoc.pdf",response.getHeader());
             helper.addAttachment("MyDoc.pdf",tempFile);
 
             mailSender.send(message);
