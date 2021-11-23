@@ -24,7 +24,6 @@ public class HtmlContentHandler {
 
         for(TemplateAttribute attr : attrList){
             String inpuTName = attr.getAttributeName();
-            //template.add(attr.getInitName(),map.get(inpuTName));
             template.add(attr.getInitName(),"<span class='fff'>"+map.get(inpuTName) +"</span>");
         }
 
