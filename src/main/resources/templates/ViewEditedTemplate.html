@@ -5,11 +5,23 @@
     <title>Page</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <style type="text/css">
+        label   {
+            padding: 10px;
+            margin-top: 20px;
+        }
+
+        textarea    {
+            margin-left: 50px;
+            padding-left: 10px;
+        }
+    </style>
 
 </head>
-<body style="background-color: beige">
+<body style="background-color: beige; ">
 
 <form action="/handleContent" method="POST" id="contentForm">
+    <h1>Fill the content for letter</h1>
     <input type="submit" value="Print Content"><br>
     <input type="text" name="hiddenContent" id="hiddenContent" hidden>
     <input type="text" name="originalContent" id="originalContent" hidden>

@@ -37,6 +37,7 @@ public class HtmlHandler {
 
             PdfDocument resultantDocument = new PdfDocument(new PdfWriter(outputStream));
             resultantDocument.setDefaultPageSize(PageSize.A4);
+
             pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(ms.toByteArray())));
             for (int i = 1; i <= pdfDocument.getNumberOfPages(); i++) {
                 PdfPage page = pdfDocument.getPage(i);

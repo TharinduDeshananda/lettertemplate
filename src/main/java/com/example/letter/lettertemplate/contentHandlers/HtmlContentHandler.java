@@ -90,9 +90,14 @@ public class HtmlContentHandler {
         ST template = new ST(htmlContentWithAttributeList,'$','$');
         List<TemplateAttribute> attrList = getAttributeList(template);
         Document doc = Jsoup.parse("<div id='mainDiv'></div>");
+
+
+        int counter=0;
+
         doc.getElementById("mainDiv");
         for(TemplateAttribute attr: attrList){
-            doc.getElementById("mainDiv").append("<label>"+attr.getPlaceHolder()+"  : </label><br>" +
+            ++counter;
+            doc.getElementById("mainDiv").append("<label>"+counter+"). "+attr.getPlaceHolder()+"  : </label><br>" +
                     "<textarea name='"+attr.getAttributeName()+"' cols='"+attr.getColsCount()+"' rows='"+attr.getRowsCount()+"'></textarea><br><br>");
         }
         return doc.body().html();
@@ -101,7 +106,7 @@ public class HtmlContentHandler {
     public static Document makeElementUnbreakable(Document doc){
 
         doc.head().append("<style type=\"text/css\">\n" +
-                "      img,tr,td   {\n" +
+                "      img,tr,td,th   {\n" +
                 "         page-break-inside:avoid; \n" +
                 "         page-break-after:auto;\n" +
                 "\n" +
@@ -125,5 +130,12 @@ public class HtmlContentHandler {
                 "</style>");
         return doc;
     }
+
+    public static Document removeBreakLines(Document doc){
+
+
+        return null;
+    }
+
 
 }

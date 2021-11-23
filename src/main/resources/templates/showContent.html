@@ -12,10 +12,10 @@
 
 <form action="/mailme" method="POST" id="contentForm">
     <input type="submit" value="Print Content"><br>
-    <input type="text" name="hiddenContent" id="hiddenContent">
+    <input type="text" name="hiddenContent" id="hiddenContent" hidden>
     <div th:utext="${templateContent}"
          contenteditable="false"
-         id="contentBoxId" class="container-md shadow p-3 mb-5 bg-body rounded my-5"
+         id="contentBoxId" class="container-md shadow p-3 mb-5 bg-body rounded my-5" style="width:21cm;"
 
     ></div>
 
